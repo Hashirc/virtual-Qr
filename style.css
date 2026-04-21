@@ -50,8 +50,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: url('assets/exterior_v3.png') no-repeat center center;
-    background-size: cover;
+    background: #000; /* Replaced with black; the video poster now handles the cover image */
     z-index: 4;
 }
 
