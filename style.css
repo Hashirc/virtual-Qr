@@ -1,0 +1,512 @@
+:root {
+    --primary: #c9a050;
+    --secondary: #1a1a1a;
+    --bg: #0a0a0a;
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --glass: rgba(255, 255, 255, 0.1);
+    --text: #ffffff;
+    --text-dim: #d4a373;
+    --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+    --font-main: 'Outfit', sans-serif;
+    --font-accent: 'Playfair Display', serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-main);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Hero & Doors */
+.hero-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    background: var(--bg); /* Base black to prevent flashes */
+    overflow: hidden;
+}
+
+.entrance-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('assets/exterior_v3.png') no-repeat center center;
+    background-size: cover;
+    z-index: 4;
+}
+
+.entrance-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 5;
+    opacity: 1; /* Make video visible but paused for the "cover page" effect */
+    transition: opacity 1s ease;
+}
+
+.hero-content {
+    text-align: center;
+    z-index: 20;
+    opacity: 0;
+    transform: scale(0.9);
+}
+
+.glow-text {
+    font-family: var(--font-accent);
+    font-size: 5rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(to right, #fff, var(--primary), #fff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 10px rgba(201, 160, 80, 0.5));
+}
+
+.glass-btn {
+    background: rgba(0, 0, 0, 0.4); /* Darker backdrop for extreme contrast */
+    backdrop-filter: blur(15px); /* Re-added blur to separate from moving video */
+    border: 2px solid var(--primary); /* Thicker primary border */
+    color: var(--text); /* White text for better readability */
+    padding: 1.2rem 5rem;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 8px; /* More breathable spacing */
+    cursor: pointer;
+    margin-top: 2rem;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    border-radius: 0;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* Outer shadow for depth */
+}
+
+.glass-btn:hover {
+    background: var(--primary);
+    color: #000;
+    box-shadow: 0 0 30px rgba(201, 160, 80, 0.4);
+}
+
+/* Waterfront Glow Removed */
+
+/* App UI */
+#app-ui {
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+    opacity: 0; /* Managed by GSAP */
+}
+
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 50;
+    backdrop-filter: blur(10px);
+}
+
+/* View Navigation */
+.view-nav {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 10px 0 30px;
+    animation: fadeIn 0.8s ease forwards;
+}
+
+.back-btn {
+    background: var(--card-bg);
+    border: 1px solid var(--glass);
+    color: var(--text);
+    padding: 8px 15px 8px 8px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+    background: var(--glass);
+    border-color: var(--primary);
+    transform: translateX(-3px);
+}
+
+#current-category {
+    font-family: var(--font-accent);
+    font-size: 1.8rem;
+    color: var(--primary);
+    margin: 0;
+}
+
+.logo {
+    font-family: var(--font-accent);
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+}
+
+.table-info {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    border: 1px solid var(--glass);
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+.cart-icon {
+    position: relative;
+}
+
+.cart-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: var(--primary);
+    font-size: 0.7rem;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+/* Categories - Vertical Feed */
+.category-scroll {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px 0;
+}
+
+.category-card {
+    width: 100%;
+    height: 200px; /* Taller for vertical feed */
+    border-radius: 24px;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 25px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.category-card:hover {
+    transform: scale(1.02);
+    border-color: var(--primary);
+}
+
+.category-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60%;
+    background: linear-gradient(transparent, rgba(0,0,0,0.9));
+}
+
+.category-card span {
+    position: relative;
+    z-index: 2;
+    font-weight: 600;
+    font-size: 1.4rem; /* Larger text */
+    letter-spacing: 1px;
+}
+
+/* Our Story Section */
+.story-section {
+    margin-top: 60px;
+    padding: 40px 20px;
+    background: var(--card-bg);
+    border-radius: 30px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.story-section h3 {
+    font-family: var(--font-accent);
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: var(--primary);
+}
+
+.story-section p {
+    color: var(--text-dim);
+    line-height: 1.8;
+    font-size: 1rem;
+}
+
+/* Items Grid - Refined for dedicated page */
+.menu-section {
+    animation: fadeIn 0.8s ease forwards;
+    padding-bottom: 50px;
+}
+
+.items-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.item-card {
+    background: var(--card-bg);
+    border-radius: 24px;
+    padding: 10px;
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: transform 0.3s ease;
+}
+
+.item-card:hover {
+    transform: translateY(-5px);
+}
+
+.item-img {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 20px;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.item-card h4 {
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+}
+
+.item-card .price {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+
+
+/* 3D Container */
+#three-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: #000;
+    z-index: 200;
+}
+
+#three-container canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 10;
+    pointer-events: auto; /* Allow dragging */
+}
+
+.close-overlay {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    background: white;
+    color: black;
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 210;
+}
+
+.three-instructions {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.5);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    pointer-events: none;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* AR Labels System */
+#ar-labels-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Let clicks pass through to 3D canvas */
+    z-index: 205; /* Above canvas */
+}
+
+.ar-label {
+    position: absolute;
+    transform: translate(-50%, -50%); /* Centered on the projected coordinate */
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+/* The glow dot anchor exactly at the 3D coordinate */
+.ar-anchor {
+    width: 6px;
+    height: 6px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(255,255,255,0.8);
+    position: relative;
+    z-index: 2;
+}
+
+/* The physical line pointing to the card */
+.ar-line {
+    width: 1px;
+    height: 50px;
+    background: linear-gradient(to top, rgba(255,255,255,0.7), rgba(168,193,75,0.2));
+    margin-bottom: -3px;
+    transform-origin: bottom center;
+}
+
+.ar-label.left .ar-line { transform: rotate(-35deg); }
+.ar-label.right .ar-line { transform: rotate(35deg); }
+.ar-label.center .ar-line { height: 35px; }
+
+/* The data card */
+.ar-card {
+    background: rgba(10, 15, 10, 0.85); /* Much more opaque for clarity */
+    backdrop-filter: blur(12px);
+    border: 2px solid #a8c14b; /* Thicker border */
+    border-radius: 12px; /* Slightly rounder */
+    padding: 10px 14px; /* More padding */
+    min-width: 120px;
+    color: #fff;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    white-space: nowrap;
+}
+
+/* Positioning adjustments to counteract the line rotation */
+.ar-label.left .ar-card { margin-right: 50px; margin-bottom: -10px; }
+.ar-label.right .ar-card { margin-left: 50px; margin-bottom: -10px; }
+
+.ar-title {
+    font-size: 0.9rem; /* Larger font */
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid rgba(168,193,75,0.4);
+    padding-bottom: 6px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5); /* Added for clarity */
+}
+
+.ar-data {
+    list-style: none;
+    font-size: 0.6rem;
+    color: #ddd;
+    text-align: left;
+}
+
+.ar-data li {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 3px;
+}
+
+.ar-data li::before {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 4px;
+    background: #a8c14b;
+    border-radius: 1px;
+}
+
+/* AI Animation Video Background */
+.ai-video-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 10;
+    filter: contrast(1.1) brightness(1.05) saturate(1.1); /* Enhanced clarity */
+}
+
+/* AI Labels for Video Mode */
+.ar-label.video-label {
+    z-index: 100;
+}
+
+.ar-anchor-dot {
+    width: 14px; /* Larger dot */
+    height: 14px;
+    background: #a8c14b;
+    border-radius: 50%;
+    margin-top: 5px;
+    box-shadow: 0 0 20px #a8c14b;
+    border: 2px solid #fff; /* High-contrast rim */
+    animation: pulseLabel 2s infinite;
+}
+
+@keyframes pulseLabel {
+    0% { transform: scale(1); opacity: 1; box-shadow: 0 0 0px #a8c14b; }
+    50% { transform: scale(1.4); opacity: 0.6; box-shadow: 0 0 20px #a8c14b; }
+    100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0px #a8c14b; }
+}
+
+.pulsing {
+    animation: floatCard 3s ease-in-out infinite;
+}
+
+@keyframes floatCard {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+    100% { transform: translateY(0); }
+}
